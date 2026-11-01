@@ -12,6 +12,9 @@ export function createTransport(
 ): Transport {
   const transport = new StreamableHTTPClientTransport(new URL(config.url), {
     authProvider: oauth.provider,
+    // 钉住 SDK 1.32.0 起的安全默认:只跟随同源重定向,跨源重定向直接失败,
+    // 避免 Authorization、Bearer token 与自定义 header 被转发到其他 origin。
+    redirectPolicy: 'same-origin',
     requestInit: { headers: config.headers },
   })
   oauth.bindTransport(transport)
